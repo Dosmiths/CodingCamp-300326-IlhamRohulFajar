@@ -1,120 +1,65 @@
-/* 1. Pengaturan Dasar (Reset) */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Readable typography [cite: 71] */
+:root {
+    --bg-color: #000000; --card-bg: #111111; --input-bg: #1a1a1a;
+    --text-primary: #ffffff; --text-secondary: #aaaaaa; --border-color: #222222;
+    --accent-blue: #5577ff; --accent-green: #00cc66; --accent-red: #ff3333;
 }
 
-body {
-    background-color: #f4f7f6;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+body.light-mode {
+    --bg-color: #f4f7f6; --card-bg: #ffffff; --input-bg: #f0f0f0;
+    --text-primary: #1a1a1a; --text-secondary: #666666; --border-color: #dddddd;
 }
 
-.container {
-    width: 100%;
-    max-width: 500px; /* Mobile-friendly width [cite: 43] */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Libre Baskerville', serif; }
+
+body { background-color: var(--bg-color); color: var(--text-primary); transition: 0.3s; display: flex; justify-content: center; padding: 40px 20px; min-height: 100vh; }
+.main-container { width: 100%; max-width: 1100px; }
+
+/* HEADER */
+.main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+.location-date .location { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; }
+.location-date .date { font-size: 1.6rem; font-weight: 700; display: block; margin-top: 5px; }
+.app-title { font-size: 1.4rem; font-weight: 700; font-style: italic; text-align: center; flex: 1; min-width: 300px; }
+.mode-btn { background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--border-color); padding: 10px 24px; border-radius: 30px; cursor: pointer; font-size: 0.8rem; font-weight: 700; }
+
+/* LAYOUT */
+.flex-wrapper { display: flex; flex-wrap: wrap; gap: 30px; }
+.column { flex: 1; min-width: 340px; display: flex; flex-direction: column; gap: 30px; }
+
+/* CARD UNIFORMITY */
+.section-card { background: var(--card-bg); padding: 30px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; }
+h3 { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+
+/* INPUT & BUTTONS - Perbaikan agar simetris */
+.input-field { 
+    width: 100%; height: 54px; background: var(--input-bg); border: 1px solid var(--border-color); 
+    border-radius: 27px; padding: 0 22px; color: var(--text-primary); margin-bottom: 15px; outline: none; font-size: 0.95rem; 
+}
+.submit-btn { 
+    width: 100%; height: 54px; background: var(--accent-blue); color: white; border: none; 
+    border-radius: 27px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+}
+.submit-btn:hover { opacity: 0.8; transform: translateY(-1px); }
+
+/* LISTS */
+.scrollable-list { list-style: none; max-height: 250px; overflow-y: auto; padding-right: 10px; }
+.scrollable-list::-webkit-scrollbar { width: 4px; }
+.scrollable-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+/* ITEM DESIGN (Mix History & Manager) */
+.transaction-item, .category-item, .summary-item { 
+    display: flex; justify-content: space-between; align-items: center; 
+    background: var(--input-bg); padding: 18px 22px; border-radius: 24px; 
+    margin-bottom: 12px; border: 1px solid var(--border-color); 
+}
+.summary-item { background: linear-gradient(90deg, var(--input-bg), transparent); border-left: 4px solid var(--accent-blue); }
+
+.delete-btn, .delete-cat-btn { 
+    background: var(--accent-red); color: white; border: none; padding: 8px 16px; 
+    border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; 
 }
 
-/* 2. Header & Saldo (Visual Hierarchy) [cite: 70] */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.balance-card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-top: 15px;
-}
-
-.balance-card p {
-    font-size: 0.8rem;
-    color: #888;
-    letter-spacing: 1px;
-}
-
-#total-balance {
-    font-size: 2.5rem;
-    color: #2ecc71;
-    margin-top: 5px;
-}
-
-/* 3. Form Styling [cite: 24] */
-.form-section {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-h3 {
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-input, select {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    outline: none;
-}
-
-button {
-    padding: 12px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-/* 4. List Transaksi (Scrollable) [cite: 30, 31] */
-#transaction-list {
-    list-style: none;
-    max-height: 250px;
-    overflow-y: auto; /* Scrollable list [cite: 31] */
-    background: white;
-    border-radius: 12px;
-    padding: 10px;
-}
-
-#transaction-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.delete-btn {
-    background-color: #e74c3c;
-    padding: 5px 10px;
-    font-size: 0.8rem;
-}
-
-/* 5. Chart Section [cite: 37] */
-.chart-section {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 20px;
-    height: 300px;
-}
+/* TYPOGRAPHY */
+.balance-value { color: var(--accent-green); font-size: 3.8rem; font-weight: 700; text-align: center; letter-spacing: -2px; }
+.summary-month { font-weight: 700; font-size: 0.9rem; }
+.summary-amount { color: var(--accent-green); font-weight: 700; }
+.chart-box { height: 320px; width: 100%; position: relative; }

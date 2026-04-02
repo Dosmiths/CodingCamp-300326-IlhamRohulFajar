@@ -1,106 +1,160 @@
-// 1. Inisialisasi Data dari Local Storage [cite: 52]
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+let categories = JSON.parse(localStorage.getItem('categories')) || ['Food', 'Transport', 'Fun'];
 let expenseChart;
 
-const transactionForm = document.getElementById('transaction-form');
-const transactionList = document.getElementById('transaction-list');
-const totalBalanceDisplay = document.getElementById('total-balance');
+// 1. Inisialisasi Header
+async function initHeader() {
+    const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+    document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', dateOptions);
 
-// 2. Fungsi untuk Menampilkan Semua Data (Render) [cite: 30, 31]
-function renderApp() {
-    // Kosongkan list sebelum diisi ulang
-    transactionList.innerHTML = '';
-    let total = 0;
-
-    // Data untuk grafik 
-    const categoryTotals = { Food: 0, Transport: 0, Fun: 0 };
-
-    transactions.forEach((item) => {
-        // Hitung total saldo 
-        total += item.amount;
-        
-        // Hitung total per kategori untuk grafik [cite: 37]
-        if (categoryTotals[item.category] !== undefined) {
-            categoryTotals[item.category] += item.amount;
-        }
-
-        // Tambahkan item ke list UI [cite: 32]
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <div>
-                <strong>${item.name}</strong><br>
-                <small>${item.category} - $${item.amount.toFixed(2)}</small>
-            </div>
-            <button class="delete-btn" onclick="deleteTransaction(${item.id})">Delete</button>
-        `;
-        transactionList.appendChild(li);
-    });
-
-    // Update tampilan saldo [cite: 35, 36]
-    totalBalanceDisplay.innerText = `$${total.toFixed(2)}`;
-
-    // Update grafik dan simpan data [cite: 38, 52]
-    updateChart(categoryTotals);
-    saveData();
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            try {
+                const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`);
+                const data = await res.json();
+                document.getElementById('user-location').innerText = data.city || data.locality || "Jakarta";
+            } catch { document.getElementById('user-location').innerText = "Jakarta"; }
+        }, () => { document.getElementById('user-location').innerText = "Jakarta"; });
+    }
 }
 
-// 3. Fungsi Menambah Transaksi Baru [cite: 24, 26]
-transactionForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+// 2. Kategori Dinamis
+function syncCategories() {
+    const select = document.getElementById('category-select');
+    const miniList = document.getElementById('custom-category-list');
+    select.innerHTML = '';
+    miniList.innerHTML = '';
 
-    const name = document.getElementById('item-name').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    const category = document.getElementById('category').value;
+    categories.forEach((cat, index) => {
+        const opt = document.createElement('option');
+        opt.value = cat; opt.innerText = cat;
+        select.appendChild(opt);
 
-    // Validasi field [cite: 27]
-    if (name && amount && category) {
-        const newTransaction = {
-            id: Date.now(),
-            name,
-            amount,
-            category
-        };
+        const li = document.createElement('li');
+        li.className = 'category-item';
+        li.innerHTML = `<span>${cat}</span><button class="delete-cat-btn" onclick="removeCategory(${index})">Delete</button>`;
+        miniList.appendChild(li);
+    });
+    localStorage.setItem('categories', JSON.stringify(categories));
+    renderApp();
+}
 
-        transactions.push(newTransaction);
-        renderApp();
-        transactionForm.reset();
+document.getElementById('add-category-btn').addEventListener('click', () => {
+    const input = document.getElementById('new-category-name');
+    const val = input.value.trim();
+    if (val && !categories.includes(val)) {
+        categories.push(val);
+        input.value = '';
+        syncCategories();
     }
 });
 
-// 4. Fungsi Menghapus Transaksi [cite: 33, 36]
-function deleteTransaction(id) {
+function removeCategory(idx) {
+    if (categories.length > 1) {
+        categories.splice(idx, 1);
+        syncCategories();
+    }
+}
+
+// 3. Render App & Monthly Summary
+function renderApp() {
+    const list = document.getElementById('transaction-list');
+    const summaryList = document.getElementById('monthly-summary-list');
+    list.innerHTML = '';
+    summaryList.innerHTML = '';
+
+    let totalBalance = 0;
+    const catTotals = {};
+    const monthTotals = {};
+
+    categories.forEach(c => catTotals[c] = 0);
+
+    // Sort transaksi terbaru di atas
+    transactions.sort((a, b) => b.id - a.id).forEach(t => {
+        totalBalance += t.amount;
+        if (catTotals[t.category] !== undefined) catTotals[t.category] += t.amount;
+
+        const date = new Date(t.id);
+        const mY = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        monthTotals[mY] = (monthTotals[mY] || 0) + t.amount;
+
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        li.innerHTML = `
+            <div><strong>${t.name}</strong><br><small>${t.category} • $${t.amount.toLocaleString()}</small></div>
+            <button class="delete-btn" onclick="removeTransaction(${t.id})">Delete</button>
+        `;
+        list.appendChild(li);
+    });
+
+    document.getElementById('total-balance').innerText = `$${totalBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    updateChart(catTotals);
+
+    // Render Monthly Summary
+    Object.keys(monthTotals).forEach(month => {
+        const li = document.createElement('li');
+        li.className = 'summary-item';
+        li.innerHTML = `<span class="summary-month">${month}</span><span class="summary-amount">$${monthTotals[month].toLocaleString()}</span>`;
+        summaryList.appendChild(li);
+    });
+
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+}
+
+// 4. CRUD Transaksi
+document.getElementById('transaction-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('item-name').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const category = document.getElementById('category-select').value;
+    transactions.push({ id: Date.now(), name, amount, category });
+    renderApp();
+    e.target.reset();
+});
+
+function removeTransaction(id) {
     transactions = transactions.filter(t => t.id !== id);
     renderApp();
 }
 
-// 5. Fungsi Simpan ke Local Storage 
-function saveData() {
-    localStorage.setItem('transactions', JSON.stringify(transactions));
-}
-
-// 6. Fungsi Update Grafik (Chart.js) 
+// 5. Chart & Theme
 function updateChart(dataValues) {
     const ctx = document.getElementById('expense-chart').getContext('2d');
-
-    if (expenseChart) {
-        expenseChart.destroy();
-    }
+    if (expenseChart) expenseChart.destroy();
+    const isLight = document.body.classList.contains('light-mode');
 
     expenseChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['Food', 'Transport', 'Fun'],
+            labels: Object.keys(dataValues),
             datasets: [{
-                data: [dataValues.Food, dataValues.Transport, dataValues.Fun],
-                backgroundColor: ['#2ecc71', '#3498db', '#e67e22']
+                data: Object.values(dataValues),
+                backgroundColor: ['#ff6600', '#00cc66', '#5577ff', '#ff3333', '#ffcc00', '#9933ff', '#00cccc'],
+                borderWidth: 0
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: isLight ? '#333' : '#fff', font: { family: "'Libre Baskerville', serif", size: 11 } } }
+            }
         }
     });
 }
 
-// Jalankan aplikasi pertama kali
-renderApp();
+const themeBtn = document.getElementById('theme-toggle');
+themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    themeBtn.innerText = isLight ? 'dark mode' : 'light mode';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    renderApp();
+});
+
+if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    themeBtn.innerText = 'dark mode';
+}
+
+initHeader();
+syncCategories();
