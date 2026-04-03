@@ -14,54 +14,47 @@ body.light-mode {
 body { background-color: var(--bg-color); color: var(--text-primary); transition: 0.3s; display: flex; justify-content: center; padding: 40px 20px; min-height: 100vh; }
 .main-container { width: 100%; max-width: 1100px; }
 
-/* HEADER */
-.main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+/* HEADER STYLES */
+.main-header { display: flex; flex-direction: column; margin-bottom: 50px; gap: 20px; }
+.header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px; }
 .location-date .location { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; }
 .location-date .date { font-size: 1.6rem; font-weight: 700; display: block; margin-top: 5px; }
-.app-title { font-size: 1.4rem; font-weight: 700; font-style: italic; text-align: center; flex: 1; min-width: 300px; }
+.app-title { font-size: 1.4rem; font-weight: 700; font-style: italic; text-align: center; flex: 1; min-width: 300px; position: relative; padding-bottom: 5px; }
+.app-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 2px; background: var(--accent-blue); }
 .mode-btn { background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--border-color); padding: 10px 24px; border-radius: 30px; cursor: pointer; font-size: 0.8rem; font-weight: 700; }
 
-/* LAYOUT */
+.header-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--border-color), transparent); margin: 5px 0; }
+.header-bottom-info { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+.stat-item { display: flex; flex-direction: column; align-items: center; }
+.stat-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+.stat-value { font-size: 0.85rem; font-weight: 700; }
+
+/* LAYOUT & CARDS */
 .flex-wrapper { display: flex; flex-wrap: wrap; gap: 30px; }
 .column { flex: 1; min-width: 340px; display: flex; flex-direction: column; gap: 30px; }
-
-/* CARD UNIFORMITY */
-.section-card { background: var(--card-bg); padding: 30px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; }
+.section-card { background: var(--card-bg); padding: 30px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; transition: 0.3s; }
 h3 { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
 
-/* INPUT & BUTTONS */
-.input-field { 
-    width: 100%; height: 54px; background: var(--input-bg); border: 1px solid var(--border-color); 
-    border-radius: 27px; padding: 0 22px; color: var(--text-primary); margin-bottom: 15px; outline: none; font-size: 0.95rem; 
-}
-.submit-btn { 
-    width: 100%; height: 54px; background: var(--accent-blue); color: white; border: none; 
-    border-radius: 27px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
-}
+/* Alignment Logic */
+.summary-card, .categories-section, .scroll-card { flex: 1; min-height: 380px; display: flex; flex-direction: column; }
+
+/* INPUTS & BUTTONS */
+.input-field { width: 100%; height: 54px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 27px; padding: 0 22px; color: var(--text-primary); margin-bottom: 15px; outline: none; font-size: 0.95rem; }
+.submit-btn { width: 100%; height: 54px; background: var(--accent-blue); color: white; border: none; border-radius: 27px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
 .submit-btn:hover { opacity: 0.8; transform: translateY(-1px); }
 
-/* LISTS */
-.scrollable-list { list-style: none; max-height: 250px; overflow-y: auto; padding-right: 10px; }
+/* LISTS & ITEMS */
+.scrollable-list { list-style: none; flex-grow: 1; overflow-y: auto; padding-right: 10px; max-height: 280px; }
 .scrollable-list::-webkit-scrollbar { width: 4px; }
 .scrollable-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-/* ITEM DESIGN */
-.transaction-item, .category-item, .summary-item { 
-    display: flex; justify-content: space-between; align-items: center; 
-    background: var(--input-bg); padding: 18px 22px; border-radius: 24px; 
-    margin-bottom: 12px; border: 1px solid var(--border-color); 
-}
+.transaction-item, .category-item, .summary-item { display: flex; justify-content: space-between; align-items: center; background: var(--input-bg); padding: 18px 22px; border-radius: 24px; margin-bottom: 12px; border: 1px solid var(--border-color); }
 .summary-item { background: linear-gradient(90deg, var(--input-bg), transparent); border-left: 4px solid var(--accent-blue); }
 
-.delete-btn, .delete-cat-btn { 
-    background: var(--accent-red); color: white; border: none; padding: 8px 16px; 
-    border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; 
-}
+.delete-btn, .delete-cat-btn { background: var(--accent-red); color: white; border: none; padding: 8px 16px; border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; }
 
-/* TYPOGRAPHY */
+/* TYPOGRAPHY & CHART */
 .balance-value { color: var(--accent-green); font-size: 3.8rem; font-weight: 700; text-align: center; letter-spacing: -2px; }
-.summary-month { font-weight: 700; font-size: 0.9rem; }
-.summary-amount { color: var(--accent-green); font-weight: 700; }
 .chart-box { height: 320px; width: 100%; position: relative; }
 
 /* FOOTER */
@@ -69,3 +62,7 @@ h3 { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margi
 .footer-line { width: 100%; height: 1px; background-color: var(--border-color); margin-bottom: 30px; }
 .quote { font-style: italic; color: var(--text-secondary); margin-bottom: 10px; font-size: 0.95rem; }
 .credits { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+
+@media (max-width: 800px) {
+    .summary-card, .categories-section, .scroll-card { min-height: auto; }
+}

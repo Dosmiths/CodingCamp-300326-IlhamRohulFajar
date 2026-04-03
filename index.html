@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jakarta Expense Visualizer - Final Edition</title>
+    <title> Expense & Budget Visualizer - Premium Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,12 +11,31 @@
 <body class="dark-mode">
     <div class="main-container">
         <header class="main-header">
-            <div class="location-date">
-                <span id="user-location" class="location">Detecting Location...</span>
-                <span id="current-date" class="date"></span>
+            <div class="header-top">
+                <div class="location-date">
+                    <span id="user-location" class="location">Detecting Location...</span>
+                    <span id="current-date" class="date"></span>
+                </div>
+                <h1 class="app-title">Expense & Budget Visualizer</h1>
+                <button id="theme-toggle" class="mode-btn">light mode</button>
             </div>
-            <h1 class="app-title">Expense & Budget Visualizer</h1>
-            <button id="theme-toggle" class="mode-btn">light mode</button>
+            
+            <div class="header-divider"></div>
+            
+            <div class="header-bottom-info">
+                <div class="stat-item">
+                    <span class="stat-label">System Status</span>
+                    <span class="stat-value" style="color: var(--accent-green);">● Active</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Today's Entry</span>
+                    <span id="today-count" class="stat-value">0 Items</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Currency</span>
+                    <span class="stat-value">USD ($)</span>
+                </div>
+            </div>
         </header>
 
         <div class="flex-wrapper">
@@ -31,14 +50,14 @@
                     </form>
                 </section>
 
-                <section class="section-card">
+                <section class="section-card scroll-card">
                     <h3>Transactions History</h3>
                     <ul id="transaction-list" class="scrollable-list"></ul>
                 </section>
 
-                <section class="section-card">
+                <section class="section-card summary-card">
                     <h3>Monthly Summary</h3>
-                    <ul id="monthly-summary-list" class="scrollable-list mini-list"></ul>
+                    <ul id="monthly-summary-list" class="scrollable-list"></ul>
                 </section>
             </div>
 
@@ -55,12 +74,12 @@
                     </div>
                 </section>
 
-                <section class="section-card">
+                <section class="section-card categories-section">
                     <h3>Manage Categories</h3>
                     <div class="category-manager">
                         <input type="text" id="new-category-name" placeholder="New Category Name" class="input-field">
                         <button id="add-category-btn" class="submit-btn" style="margin-bottom: 25px;">Add Category</button>
-                        <ul id="custom-category-list" class="scrollable-list mini-list"></ul>
+                        <ul id="custom-category-list" class="scrollable-list"></ul>
                     </div>
                 </section>
             </div>

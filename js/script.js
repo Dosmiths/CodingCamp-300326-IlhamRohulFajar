@@ -2,7 +2,6 @@ let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 let categories = JSON.parse(localStorage.getItem('categories')) || ['Food', 'Transport', 'Fun'];
 let expenseChart;
 
-// 1. Inisialisasi Header
 async function initHeader() {
     const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
     document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', dateOptions);
@@ -18,7 +17,6 @@ async function initHeader() {
     }
 }
 
-// 2. Kategori Dinamis
 function syncCategories() {
     const select = document.getElementById('category-select');
     const miniList = document.getElementById('custom-category-list');
@@ -56,7 +54,6 @@ function removeCategory(idx) {
     }
 }
 
-// 3. Render App & Monthly Summary
 function renderApp() {
     const list = document.getElementById('transaction-list');
     const summaryList = document.getElementById('monthly-summary-list');
@@ -66,10 +63,11 @@ function renderApp() {
     let totalBalance = 0;
     const catTotals = {};
     const monthTotals = {};
+    const today = new Date().toDateString();
+    let todayItems = 0;
 
     categories.forEach(c => catTotals[c] = 0);
 
-    // Sort transaksi terbaru di atas
     transactions.sort((a, b) => b.id - a.id).forEach(t => {
         totalBalance += t.amount;
         if (catTotals[t.category] !== undefined) catTotals[t.category] += t.amount;
@@ -77,6 +75,8 @@ function renderApp() {
         const date = new Date(t.id);
         const mY = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
         monthTotals[mY] = (monthTotals[mY] || 0) + t.amount;
+
+        if (date.toDateString() === today) todayItems++;
 
         const li = document.createElement('li');
         li.className = 'transaction-item';
@@ -88,9 +88,9 @@ function renderApp() {
     });
 
     document.getElementById('total-balance').innerText = `$${totalBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    document.getElementById('today-count').innerText = `${todayItems} Items`;
     updateChart(catTotals);
 
-    // Render Monthly Summary
     Object.keys(monthTotals).forEach(month => {
         const li = document.createElement('li');
         li.className = 'summary-item';
@@ -101,7 +101,6 @@ function renderApp() {
     localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// 4. CRUD Transaksi
 document.getElementById('transaction-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('item-name').value;
@@ -117,7 +116,6 @@ function removeTransaction(id) {
     renderApp();
 }
 
-// 5. Chart & Theme
 function updateChart(dataValues) {
     const ctx = document.getElementById('expense-chart').getContext('2d');
     if (expenseChart) expenseChart.destroy();
