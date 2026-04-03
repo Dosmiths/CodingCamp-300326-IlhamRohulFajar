@@ -29,7 +29,7 @@ body { background-color: var(--bg-color); color: var(--text-primary); transition
 .section-card { background: var(--card-bg); padding: 30px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; }
 h3 { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
 
-/* INPUT & BUTTONS - Perbaikan agar simetris */
+/* INPUT & BUTTONS */
 .input-field { 
     width: 100%; height: 54px; background: var(--input-bg); border: 1px solid var(--border-color); 
     border-radius: 27px; padding: 0 22px; color: var(--text-primary); margin-bottom: 15px; outline: none; font-size: 0.95rem; 
@@ -45,7 +45,7 @@ h3 { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margi
 .scrollable-list::-webkit-scrollbar { width: 4px; }
 .scrollable-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-/* ITEM DESIGN (Mix History & Manager) */
+/* ITEM DESIGN */
 .transaction-item, .category-item, .summary-item { 
     display: flex; justify-content: space-between; align-items: center; 
     background: var(--input-bg); padding: 18px 22px; border-radius: 24px; 
@@ -63,3 +63,9 @@ h3 { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margi
 .summary-month { font-weight: 700; font-size: 0.9rem; }
 .summary-amount { color: var(--accent-green); font-weight: 700; }
 .chart-box { height: 320px; width: 100%; position: relative; }
+
+/* FOOTER */
+.main-footer { margin-top: 60px; text-align: center; padding-bottom: 40px; }
+.footer-line { width: 100%; height: 1px; background-color: var(--border-color); margin-bottom: 30px; }
+.quote { font-style: italic; color: var(--text-secondary); margin-bottom: 10px; font-size: 0.95rem; }
+.credits { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
